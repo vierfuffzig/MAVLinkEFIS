@@ -340,7 +340,7 @@ void comm_receive() {
             mavlink_attitude_t attitude;
             mavlink_msg_attitude_decode(&msg, &attitude);
             
-            roll = attitude.roll * 57.2958;
+            roll = -attitude.roll * 57.2958;
             pitch = attitude.pitch * 57.2958;
           }
           break;
