@@ -3,25 +3,16 @@
  *  
  * This program was developed to connect an Arduino board with a Pixhawk via MAVLink 
  *   with the objective of controlling a group of WS2812B LED lights on board of a quad
- * 
- * The current version of the program is working properly.
- * 
- * TO DO:
- *  - Move STREAMS request to RC_CHANNELS to use values in logic
- *  - Add RC_CHANNLES_RAW messages monitoring: move #30 to RC_CHANNELS_RAW (#35)
- *      http://mavlink.org/messages/common#RC_CHANNELS_RAW
- *  - Look for message on low battery:
- *      To be tested: http://mavlink.org/messages/common#PARAM_REQUEST_READ
- *      To be checked: http://mavlink.org/messages/common#SYS_STATUS
- *  - Potential implementation of other alarms, like high intensity
- *      
- * You can restrict the maximum package size with this parameter in mavlink_types.h:
-
-    #ifndef MAVLINK_MAX_PAYLOAD_LEN_
-    // it is possible to override this, but be careful! Defa_
-    #define **MAVLINK_MAX_PAYLOAD_LEN 255 ///< Maximum payload length_
-    #endif_
  */
+
+
+// Demo code for artifical horizon display
+// Written by Bodmer for a 160 x 128 TFT display
+// 15/8/16
+
+
+// Code templates joined by vierfuffzig feb 2021
+// github
 
 
 // In case we need a second serial port for debugging
@@ -112,11 +103,19 @@ int16_t roll = 0;
 int16_t pitch = 0;
 int16_t heading = 0;
 float alt = 0;
-float volt = 0;
+//float volt = 0;
+float curr = 0;
 int16_t rssi = 0;
-float climb = 0;
+//float climb = 0;
 float aspd = 0;
 int16_t mode = 0;
+
+static float volt = 12.3;
+static char voltstr[15];
+
+static float climb = 12.3;
+static char climbstr[15];
+
 
 //////////////////////////////////////////// end of mav variables //////////////////////////////////////////////////////////////
 
@@ -135,7 +134,6 @@ void setup() {
   mySerial.println("MAVLink starting.");
 #endif
 
-
 ///////////////// TFT setup ///////////////////////////////////////////////////
 
   tft.begin();
@@ -153,9 +151,9 @@ void setup() {
   // testRoll();
   // testPitch();
 
-  tft.setTextColor(TFT_YELLOW, SKY_BLUE);
-  tft.setTextDatum(TC_DATUM);            // Centre middle justified
-  tft.drawString("ArduPilot", 64, 10, 1);
+//  tft.setTextColor(TFT_YELLOW, SKY_BLUE);
+//  tft.setTextDatum(TC_DATUM);            // Centre middle justified
+//  tft.drawString("ArduPilot", 64, 10, 1);
 }
 
 void loop() {
@@ -309,6 +307,7 @@ void comm_receive() {
             mavlink_msg_sys_status_decode(&msg, &sys_status);
             
             volt = sys_status.voltage_battery * 0.001;
+            dtostrf(volt, 3, 1, voltstr);
           }
           break;
 
@@ -319,6 +318,7 @@ void comm_receive() {
             
             alt = (float)round(vfr_hud.alt * 0.01);
             climb = (float)round(vfr_hud.climb);
+            dtostrf(climb, 3, 1, climbstr);
             aspd = (float)round(vfr_hud.airspeed);
             heading = (int16_t)round(vfr_hud.heading);
             // if (uav_heading >= 180 ) uav_heading = -360+uav_heading; //convert from 0-360 to -180/180°
@@ -501,17 +501,49 @@ void drawInfo(void)
   tft.setCursor(64 + 12 + 1, 80 + 40 - 3);
   tft.print("20");
 
-  // Display justified angle value near bottom of screen
+
+/*****flight data*******
+ * 
+ *   int16_t heading = 0;
+ *   float alt = 0;
+ *   float volt = 0;
+ *   float curr = 0;
+ *   int16_t rssi = 0;
+ *   float climb = 0;
+ *   float aspd = 0;
+ *   int16_t mode = 0;
+ */
+
+  // Display flight data
+  // Top Data
+  tft.setTextColor(TFT_YELLOW, SKY_BLUE);
+  tft.setTextDatum(TC_DATUM);
+  tft.setTextPadding(24);
+  
+  tft.drawNumber(alt, 69, 10, 1);
+  tft.drawString(climbstr, 74, 19, 1);
+  //tft.drawString("12.3", 74, 19, 1);
+
+  // Bottom data
   tft.setTextColor(TFT_YELLOW, BROWN); // Text with background
   tft.setTextDatum(MC_DATUM);            // Centre middle justified
   tft.setTextPadding(24);                // Padding width to wipe previous number
-  tft.drawNumber(roll, 64, 142, 1);
+ 
+  tft.drawNumber(heading, 64, 135, 1);
+  tft.drawNumber(rssi, 64, 144, 1);
+  tft.drawString(voltstr, 68, 153, 1);
+  //tft.drawNumber(curr, 74, 151, 1);
+  //tft.drawNumber(alt, 64, 151, 1);
 
   // Draw fixed text
   tft.setTextColor(TFT_YELLOW);
   tft.setTextDatum(TC_DATUM);            // Centre middle justified
-  tft.drawString("MAV Data", 64, 1, 1);
-  tft.drawString("vierfuffzig", 64, 151, 1);
+  tft.drawString("FBWA", 64, 1, 1);
+  tft.drawString("Alt", 35, 10, 1);
+  tft.drawString("Climb", 41, 19, 1);
+  tft.drawString("Hdg", 35, 130, 1);
+  tft.drawString("Rssi", 37, 139, 1);
+  tft.drawString("Bat", 35, 148, 1);
 
 
 }
