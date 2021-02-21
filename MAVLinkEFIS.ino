@@ -430,26 +430,26 @@ void mode_switch()
   case 11:
     strcpy(modestr, "RTL");
     break;
-//  case 12:
-//    char modestr[] = "LOITER";
-//    break;
-//  case 13:
-//    char modestr[] = "TAKEOFF";
-//    break;
-//  case 14:
-//    char modestr[] = "AVOID";
-//    break;
-//  case 15:
-//    char modestr[] = "GUIDED";
-//    break;
-//  case 16:
-//    char modestr[] = "INITIALISING";
-//    break;
-//  case 24:
-//    char modestr[] = "THERMAL";
-//    break;
+  case 12:
+    strcpy(modestr, "LOITER");
+    break;
+  case 13:
+    strcpy(modestr, "TAKEOFF");
+    break;
+  case 14:
+    strcpy(modestr, "AVOID");
+    break;
+  case 15:
+    strcpy(modestr, "GUIDED");
+    break;
+  case 16:
+    strcpy(modestr, "INITIALISING");
+    break;
+  case 24:
+    strcpy(modestr, "THERMAL");
+    break;
   default:
-//    char modestr[] = "THERMAL";
+    strcpy(modestr, "LOADING");
     
     break;
   }
