@@ -116,6 +116,9 @@ static char voltstr[15];
 static float climb = 12.3;
 static char climbstr[15];
 
+// String modestr = "MODE";
+char modestr[15] = "MODE";
+
 
 //////////////////////////////////////////// end of mav variables //////////////////////////////////////////////////////////////
 
@@ -219,6 +222,9 @@ void loop() {
 
   // Check reception buffer
   comm_receive();
+
+  // Flightmode switch
+  mode_switch();
 
 ////////////////////////////////////// TFT display //////////////////////////
 
@@ -385,6 +391,70 @@ void comm_receive() {
   }
 }
 
+
+void mode_switch()
+{
+  //String modestr = "MODE";
+
+  switch (mode) {
+  case 0:
+    strcpy(modestr, "MANUAL");
+    break;
+  case 1:
+    strcpy(modestr, "CIRCLE");
+    break;
+  case 2:
+    strcpy(modestr, "STABILIZE");
+    break;
+  case 3:
+    strcpy(modestr, "TRAINING");
+    break;
+  case 4:
+    strcpy(modestr, "ACRO");
+    break;
+  case 5:
+    strcpy(modestr, "FBWA");
+    break;
+  case 6:
+    strcpy(modestr, "FBWB");
+    break;
+  case 7:
+    strcpy(modestr, "CRUISE");
+    break;
+  case 8:
+    strcpy(modestr, "AUTOTUNE");
+    break;
+  case 10:
+    strcpy(modestr, "AUTO");
+    break;
+  case 11:
+    strcpy(modestr, "RTL");
+    break;
+//  case 12:
+//    char modestr[] = "LOITER";
+//    break;
+//  case 13:
+//    char modestr[] = "TAKEOFF";
+//    break;
+//  case 14:
+//    char modestr[] = "AVOID";
+//    break;
+//  case 15:
+//    char modestr[] = "GUIDED";
+//    break;
+//  case 16:
+//    char modestr[] = "INITIALISING";
+//    break;
+//  case 24:
+//    char modestr[] = "THERMAL";
+//    break;
+  default:
+//    char modestr[] = "THERMAL";
+    
+    break;
+  }
+}
+
 // #########################################################################
 // Update the horizon with a new angle (angle in range -180 to +180)
 // #########################################################################
@@ -518,8 +588,11 @@ void drawInfo(void)
   // Top Data
   tft.setTextColor(TFT_YELLOW, SKY_BLUE);
   tft.setTextDatum(TC_DATUM);
-  tft.setTextPadding(24);
   
+  tft.setTextPadding(88); // Flightmode requires full line padding
+  tft.drawString(modestr, 64, 1, 1);
+  
+  tft.setTextPadding(24); // reset to value only padding
   tft.drawNumber(alt, 69, 10, 1);
   tft.drawString(climbstr, 74, 19, 1);
   //tft.drawString("12.3", 74, 19, 1);
@@ -538,12 +611,17 @@ void drawInfo(void)
   // Draw fixed text
   tft.setTextColor(TFT_YELLOW);
   tft.setTextDatum(TC_DATUM);            // Centre middle justified
-  tft.drawString("FBWA", 64, 1, 1);
+  
   tft.drawString("Alt", 35, 10, 1);
+  tft.drawString("m", 86, 10, 1);
   tft.drawString("Climb", 41, 19, 1);
+  tft.drawString("m/s", 92, 19, 1);
   tft.drawString("Hdg", 35, 130, 1);
+  tft.drawString("deg", 88, 130, 1);
   tft.drawString("Rssi", 37, 139, 1);
+  tft.drawString("%", 88, 139, 1);
   tft.drawString("Bat", 35, 148, 1);
+  tft.drawString("V", 88, 148, 1);
 
 
 }
