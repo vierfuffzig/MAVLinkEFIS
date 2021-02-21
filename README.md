@@ -9,7 +9,7 @@ Indiviual hardware used is an arduino pro mini and a 0.96" 80 x 160 st7735-based
 
 ### Wiring ###
 
-![MAVLinkEFIS](https://github.com/vierfuffzig/MAVLinkEFIS/blob/main/MAVLinkEFIS.jpeg)
+![MAVLinkEFIS](https://github.com/vierfuffzig/MAVLinkEFIS/blob/main/MAVLinkEFIS.jpg)
 
 
 ### Config ###
